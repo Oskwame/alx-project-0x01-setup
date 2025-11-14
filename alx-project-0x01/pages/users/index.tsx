@@ -42,4 +42,4 @@ export async function getStaticProps() {
   }
 }
 
-export default Users
+export default Users;
