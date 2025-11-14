@@ -8,11 +8,11 @@ const Header: React.FC = () => {
      <Link href="/">Daily Contents</Link>
   </h3>
         <nav>
-          <ul className="flex space-x-6">
-            <li className="hover:underline">
+          <ul className="flex space-x-8">
+            <li className="hover:underline px-2">
               <Link href="/posts">Posts</Link>
             </li>
-            <li className="hover:underline">
+            <li className="hover:underline px-2">
               <Link href="/users">Users</Link>
             </li>
           </ul>
