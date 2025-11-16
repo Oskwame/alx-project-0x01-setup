@@ -1,37 +1,71 @@
-
-import React from 'react'
+import React, { useState } from 'react'
 import PostCard from '../../components/common/PostCard'
 import Header from '../../components/layout/Header'
-import { PostProps } from '@/interfaces'
+import PostModal from '../../components/common/PostModal'
+import { PostData, PostProps } from '@/interfaces'
 
-type Post = {
-  userId: number
-  id: number
-  title: string
-  body: string
+interface PostsPageProps {
+  posts: PostProps[];
 }
 
-type Props = {
-  posts: PostProps[]
-}
+const PostsPage: React.FC<PostsPageProps> = ({ posts }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [postList, setPostList] = useState<PostProps[]>(posts);
 
-const PostsPage: React.FC<Props> = ({ posts }) => {
+  const handleAddPost = (newPost: PostData) => {
+    const createdPost: PostProps = {
+      ...newPost,
+      id: postList.length + 1,
+    };
+
+    setPostList([createdPost, ...postList]);
+  };
+
   return (
-    <div>
+    <div className="flex flex-col h-screen">
       <Header />
-      <main className="p-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {posts.map((p) => (
-          <PostCard key={p.id} title={p.title} body={p.body} userId={0} id={0} />
-        ))}
+
+      <main className="p-4">
+        <div className="flex justify-between mb-4">
+          <h1 className="text-2xl font-semibold">Post Content</h1>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="bg-blue-700 px-4 py-2 rounded-full text-white"
+          >
+            Add Post
+          </button>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          {postList.map(({ title, body, userId, id }) => (
+            <PostCard
+              title={title}
+              body={body}
+              userId={userId}
+              id={id}
+              key={id}
+            />
+          ))}
+        </div>
       </main>
+
+      {isModalOpen && (
+        <PostModal
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleAddPost}
+        />
+      )}
     </div>
-  )
+  );
+};
+
+export async function getStaticProps() {
+  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const posts = await response.json();
+
+  return {
+    props: { posts },
+  };
 }
 
-  export async function getStaticProps() {
-    const res = await fetch(`https://jsonplaceholder.typicode.com/posts`)
-    const posts: Post[] = await res.json()
-    return { props: { posts } }
-  }
-
-export default PostsPage
+export default PostsPage;
